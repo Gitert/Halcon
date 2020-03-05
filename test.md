@@ -3,9 +3,9 @@
 
 ---
 
-<p><strong>Machine Vision: Halcon</strong></p>
+<h1 id="machine-vision-halcon">Machine Vision: Halcon</h1>
 <p>The essentials of solving vision problems with Halcon.</p>
-<p><strong>Introduction</strong></p>
+<h2 id="introduction">Introduction</h2>
 <p>During this tutorial you will learn the essentials about machine vision using Halcon software by working on different exercises.</p>
 <p>Professional industrial computer vision libraries, such as Cognex or in this case Halcon, are usually made to allow a relatively inexperienced user to write really simple image processing code. Even though this is the case it is encouraged to read through the tutorial completely. With machine vision it’s all about the details and these can make or break your application.</p>
 <p><strong>Goals of this practicum</strong></p>
