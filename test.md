@@ -75,7 +75,7 @@ To determine if there are any bottles present in picture we have to set up crite
 <p>Your code should look like this when finished:</p>
 <p>[PLAATJE3]</p>
 <p>Let’s start by running the program.</p>
-<p>Press the “Run”-button on the toolbar, or F5 on your keyboard. The green arrow, or Program Counter, tells us that the program has been executed only partially so far. Let’s reset it and take a look at the whole program. You can reset the program by clicking on the “Reset Program Execution”-button or by pressing F2 on your keyboard. Then, go through your program step by step by clicking the “Step Over”-button or by pressing F6 repeatedly. Alternatively, you can click “Run” or F5 to execute the program until it is stopped explicitly, for example by the operator “stop”. Depending on the mouse position, you can reset the program counter, or you can insert a breakpoint. Furthermore, you can deactivate and activate single lines of your program very quickly. Simply select the line and click the respective buttons on the toolbar, or use F3 and F4. Now, let’s execute the program until the end</p>
+<p>Press the “Run”-button on the toolbar, or F5 on your keyboard. The green arrow, or Program Counter, tells us that the program has been executed only partially so far. Let’s reset it and take a look at the whole program. You can reset the program by clicking on the “Reset Program Execution”-button or by pressing F2 on your keyboard. Then, go through your program step by step by clicking the “Step Over”-button or by pressing F6 repeatedly. Alternatively, you can click “Run” or F5 to execute the program until it is stopped explicitly, for example by the operator “stop”. Depending on the mouse position, you can reset the program counter, or you can insert a breakpoint. Furthermore, you can deactivate and activate single lines of your program very quickly. Simply select the line and click the respective buttons on the toolbar, or use F3 and F4. Now, let’s execute the program until the end.</p>
 <p>The “Variable Window” displays all variables. They are divided into Iconic Variables, which contain images, regions, and contours, and Control Variables, which contain all numbers and strings.</p>
 <p>You can quickly display iconic variables in the Graphics Window by double-clicking on them in the Variable Window. Alternatively, you can right-click on them and choose “display” or “clear/display”. “Display” overlays the new object on top of the existing display in the Graphics Window, whereas “Clear/Display” clears the Graphics Window first.</p>
 <p>You’re almost there, lets continue to add a few operators to reduce the noise in the picture.</p>
@@ -102,12 +102,12 @@ _dev_display (RoundCandidates)_
 <p><strong>Step 2: Extract amount of bottles</strong></p>
 <p>After having detected the bottles present in the crates lets insert a counter. This will inform the system how many bottles have been inserted so it can calculated how much deposit should be returned to the customer.</p>
 <p>Add this line in front of your code:</p>
-<pre><code>_dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)_
+<pre><code>dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)
 </code></pre>
 <p>Add these lines at the end of your code:</p>
-<pre><code>_count_obj (RoundCandidates, NumBottles)_
-_set_display_font (WindowHandle, 16, 'mono', 'true', 'false')_
-_disp_message (WindowHandle, NumBottles + ' bottles found.', 'window', 12, 12, 'black', ‘true')_
+<pre><code>count_obj (RoundCandidates, NumBottles)
+set_display_font (WindowHandle, 16, 'mono', 'true', 'false')
+disp_message (WindowHandle, NumBottles + ' bottles found.', 'window', 12, 12, 'black', ‘true')
 </code></pre>
 <blockquote>
 <p>Run your code →</p>
@@ -120,12 +120,14 @@ _disp_message (WindowHandle, NumBottles + ' bottles found.', 'window', 12, 12, '
 <p>If we run the current code through other pictures, we can see that upside down bottles are detected as correctly positioned ones. This is a problem we need to solve.</p>
 <p>[PLAATJE7]</p>
 <p>With the select_shape operator it is possible to exclude circles that are larger than a certain diameter.</p>
+<blockquote>
 <p>Add the following after the other select_shape operator.</p>
-<pre><code>_select_shape (RoundCandidates, BigBottles, 'max_diameter', 'and', 75, 99999)_
+</blockquote>
+<pre><code>select_shape (RoundCandidates, BigBottles, 'max_diameter', 'and', 75, 99999)
 </code></pre>
 <p>To highlight these bigger circles we add a few lines to the ‘display results’ section.</p>
-<pre><code>_dev_set_color ('goldenrod')_
-_dev_display (BigBottles)_
+<pre><code>dev_set_color ('goldenrod')
+dev_display (BigBottles)
 </code></pre>
 <p>If you want it is possible to select another color.</p>
 <p>Running the program will result in this:</p>
@@ -149,7 +151,9 @@ connection (Region, ConnectedRegions)
 We can now count the number of times ‘Clutter’ show up and send out a warning.</p>
 <p>Add a ‘count_obj’ operator after the counter we added before. With the object being Clutter and the output is NumClutter.<br>
 NumClutter will be used to display a warning.</p>
+<blockquote>
 <p>Add these lines to the end of your code:</p>
+</blockquote>
 <pre><code>if (NumClutter &gt; 0)
 disp_message (WindowHandle, 'Warning! Clutter detected!', 'window', 50, 12, 'red', 'true')
 endif
