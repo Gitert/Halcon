@@ -74,4 +74,29 @@ To determine if there are any bottles present in picture we have to set up crite
 </blockquote>
 <p>Your code should look like this when finished:</p>
 <p>[PLAATJE3]</p>
+<p>Let’s start by running the program.</p>
+<p>Press the “Run”-button on the toolbar, or F5 on your keyboard. The green arrow, or Program Counter, tells us that the program has been executed only partially so far. Let’s reset it and take a look at the whole program. You can reset the program by clicking on the “Reset Program Execution”-button or by pressing F2 on your keyboard. Then, go through your program step by step by clicking the “Step Over”-button or by pressing F6 repeatedly. Alternatively, you can click “Run” or F5 to execute the program until it is stopped explicitly, for example by the operator “stop”. Depending on the mouse position, you can reset the program counter, or you can insert a breakpoint. Furthermore, you can deactivate and activate single lines of your program very quickly. Simply select the line and click the respective buttons on the toolbar, or use F3 and F4. Now, let’s execute the program until the end</p>
+<p>The “Variable Window” displays all variables. They are divided into Iconic Variables, which contain images, regions, and contours, and Control Variables, which contain all numbers and strings.</p>
+<p>You can quickly display iconic variables in the Graphics Window by double-clicking on them in the Variable Window. Alternatively, you can right-click on them and choose “display” or “clear/display”. “Display” overlays the new object on top of the existing display in the Graphics Window, whereas “Clear/Display” clears the Graphics Window first.</p>
+<p>You’re almost there, lets continue to add a few operators to reduce the noise in the picture.</p>
+<blockquote>
+<p><em>‘select_shape’</em> → <em>ConnectedRegions, Candidates, [‘width’,‘height’], ‘and’, [25,25], [100,100]</em></p>
+<p><em>‘fill_up’</em> → <em>Candidates, FilledCandidates</em></p>
+<p><em>‘opening_circle</em> → <em>FilledCandidates, FilledCandidates, 15.5</em></p>
+</blockquote>
+<p>After reducing noise lets extract the ‘round’ reflections from the bottles.</p>
+<blockquote>
+<p><em>‘select_shape’ → FilledCandidates, RoundCandidates, ‘circularity’, ‘and’, 0.87, 1</em></p>
+</blockquote>
+<p>All that rests us is to display the results.</p>
+<p>Copy/Paste the following code to your code:</p>
+<pre><code>_dev_display (Image)_
+_dev_set_line_width (5)_
+_dev_set_color ('lime green')_
+_dev_display (RoundCandidates)_
+</code></pre>
+<p>Your code should look like this after these steps:</p>
+<p>[PLAATJE4]</p>
+<p>Run your code and you’ll be presented by 20 green circles indicating that there are 20 bottles present in this crate.</p>
+<p>[PLAATJE5]</p>
 
