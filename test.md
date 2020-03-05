@@ -28,7 +28,7 @@
 </ol>
 <p>Now you are ready to start working on the exercises.</p>
 <h2 id="exercise-1-detecting-bottles-in-crates">Exercise 1: Detecting bottles in crates</h2>
-<p><img src="http://media.nu.nl/m/m1mxxpra124w_wd1280.jpg/normen-afschaffing-statiegeld-niet-gehaald.jpg" alt="enter image description here"></p>
+<p><img src="http://media.nu.nl/m/m1mxxpra124w_wd1280.jpg/normen-afschaffing-statiegeld-niet-gehaald.jpg" alt="Statiegeld inleverpunt"></p>
 <p>If you buy a large plastic bottle of soda, a beer bottle or a crate of beer, chances are you will pay more than you expected at checkout. That’s a deposit! It is a deposit on the item itself to encourage you to return the empty packaging for recycling. When you are done with the bottles you take it back to the supermarket where there is a machine where you can put the bottles/crates into. With machine vision and other detection techniques it is possible to analyse the ingested material in great detail on colour (clear or coloured) or material (can, PET, PP, glass, etc.).</p>
 <p>The technical development to automatically sort the material in great detail makes recycling and administration of the system increasingly optimised. The software ensures a very fast settlement of deposit amounts and also provides a wealth of market information.</p>
 <p>In this first exercise you’ll have a first look at HDevelop and its basic functionalities. You will learn how to set up our own program to analyse pictures, use counters to display the gathered information and your for-loops to repeat processing images.</p>
@@ -171,4 +171,26 @@ endif
 endfor
 </code></pre>
 <p>After all these steps you’ll have a fully working vision program to detect and count bottles plus warning the machine when there is clutter on the crate. Try it out by running the program from the start!</p>
+<h2 id="exercise-2-reading-the-use-by-date-on-packaging">Exercise 2: Reading the use-by date on packaging</h2>
+<p><img src="https://www.rd.nl/image/policy:1.612600:1467452107/houdbaarheidsdatum.jpg?f=16x9&amp;$p$f=ab4ea61" alt="Houdbaarheidsdatum"></p>
+<p>A use-by date can be found on foods that can only be kept for a short time, such as meat, fish, pre-cut vegetables, chilled meals and fresh fruit juices.</p>
+<p>This date is the last day on which you can safely use the product. After this date, pathogens, such as bacteria, can start to grow. You often can’t see, smell or taste these, but they can make you sick. So after the use-by date you have to throw the product away.</p>
+<p>During the distribution fase an error has been made and a large shipment of yoghurt has been mixed with older samples. It is crucial to sort out this batch of products to prevent people getting rotten yoghurt but will take days if done by hand. This problem can be solved fast with machine vision.</p>
+<p>In this second exercise we take a look at HDevelop and its Assistant functionalities. You will learn how to generate a program to detect symbols, segment these symbols and show the results in a table.</p>
+<h3 id="ocr-assistant">OCR assistant</h3>
+<p>To solve this problem we can make use of the Assistant options in Halcon. With one of these assistants, you can perform optical character recognition (OCR). By specifying the region of the text, adjusting values, learning examples and classifying with an existing classifier or training your own classifier, the text can be localised and read.</p>
+<p>Using the OCR Assistant is simple: either choose the Quick Setup to load an image and perform an OCR by setting basic parameters or use the sections Image Source and Region of Interest where you can also load a sample and mark the text that should be read with a rectangle. Then improve the segmentation by adapting relevant parameters, choose a pre-trained font or performing your own training and finally add the resulting code to your application.</p>
+<p>To start up this assistant head over to the ‘Assistants’ panel and select ‘Open New OCR’</p>
+<ol>
+<li>Load a sample image<br>
+Search for the ‘ocr’ folder and select the yoghurt_lid_04 image.</li>
+<li>Mark the position of the text to be read using a rectangle</li>
+<li>Enter the text that you expect to be read</li>
+<li>Check any of the statements that apply</li>
+<li>Click the ‘Apply Quick Setup’ button</li>
+</ol>
+<p>It is possible the program will give an error saying:<br>
+”Expected number of symbols were found but not read correctly.”</p>
+<p>When this happens go to the ‘Segmentation’ tab and ‘OCR Classifier’ tab to change the settings until the symbols are recognised or change the text you expect to be read.</p>
+<p>With the OCR assistant it is either hit or miss. Even if you manage to get the Assistant program up and running, using the setup you made might not work for other pictures. This because the Segmentation options are limited. In order to fully get access to the segmentation options it is recommended to make use of the Operators instead of the Assistant.</p>
 
