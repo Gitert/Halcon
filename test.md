@@ -151,8 +151,24 @@ We can now count the number of times ‘Clutter’ show up and send out a warnin
 NumClutter will be used to display a warning.</p>
 <p>Add these lines to the end of your code:</p>
 <pre><code>if (NumClutter &gt; 0)
-disp_message (WindowHandle, 'Warning! Clutter detected!', 'window', 50, 12, 'red', 'true')
+    disp_message (WindowHandle, 'Warning! Clutter detected!', 'window', 50, 12, 'red', 'true')
 endif
 </code></pre>
 <p>Run the program again and if you did everything correctly a warning message will be displayed in the Graphic Window.</p>
+<p><strong>Step 5: Loop the program to process multiple pictures</strong></p>
+<p>Now we have set up all of the inspection criteria we have one problem remaining. Every time a new crate enters the system the picture of the crate has to be manually loaded into the program. This is something we want to avoid. Lets add a loop to repeat the program for all the pictures in the bottle folder.</p>
+<p>Add this line after the first line of your code:</p>
+<pre><code>    for Index := 1 to 24 by 1
+</code></pre>
+<p>Change the ‘read_’image’ operator to:</p>
+<pre><code>    read_image (Image, 'bottles/bottle_crate_' + Index$'.02')
+</code></pre>
+<p>Add these lines to the end of your code to run all of the pictures in the folder:</p>
+<pre><code>    if (Index &lt; 24)
+	    disp_continue_message (WindowHandle, 'black', 'true')
+    endif
+    stop ()
+endfor
+</code></pre>
+<p>After all these steps you’ll have a fully working vision program to detect and count bottles plus warning the machine when there is clutter on the crate. Try it out by running the program from the start!</p>
 
