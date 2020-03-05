@@ -197,4 +197,51 @@ Search for the ‘ocr’ folder and select the yoghurt_lid_04 image.</li>
 <p><img src="https://www.infinityqs.com/InfinityQS/media/assets/images/tabbed-content/inset-images/your-business-case/packaging/packaging-line.jpg" alt="QC of medicine"></p>
 <p>For the production of high-quality medicines and their packaging, regular quality control is essential, so that the parameters meet the specifications unabated. If the quality is checked too late in the process, an entire batch can be rejected. A control-point like this can be set up using machine vision to check the content of the packaging.</p>
 <p>The task of this exercise is to check the content of machine filled blisters. An image of the packaging is used to locate the chambers within a blister pack and serve as a overlay for the ROI. This overlay is then used to check the other images. Using blob analysis, the contents of each chamber are segmented and eventually classified according to shape properties.</p>
+<p><strong>-Loading reference image</strong></p>
+<p>Lets begin by creating a new job.</p>
+<blockquote>
+<p>File → New Program</p>
+</blockquote>
+<p>Use the read_image Operator to load the ‘blister_reference’ picture from the ‘blister’ folder. Give the image an name to load it as an Iconic Variable.</p>
+<p>To create an graphics window use this line:</p>
+<pre><code>dev_open_window_fit_image (Reference, 0, 0, -1, -1, WindowHandle)
+</code></pre>
+<p><strong>-Inspection criteria</strong></p>
+<p>To properly conduct a quality control of the pills and to verify if the packaging should be accepted of rejected we have to set up criteria. Unlike the bottle exercise where location was not crucial, in this case it is of most importance. Each blister should contain 15 pills so there will be an equal amount of individual regions to verify.</p>
+<p><strong>-Creating a pattern</strong></p>
+<p>In the first step we make a reference pattern to easily ‘cut out’ the chambers in the other blister images using the reference picture we have already loaded. If you have not yet done this, go back to the previous step.</p>
+<p>Copy/Paste the following copy to the program window:</p>
+<pre><code>threshold (Reference, Region, 90, 255)
+shape_trans (Region, Blister, 'convex')
+orientation_region (Blister, Phi)
+area_center (Blister, Area1, Row, Column)
+vector_angle_to_rigid (Row, Column, Phi, Row, Column, 0, HomMat2D)
+affine_trans_image (Reference, Image2, HomMat2D, 'constant', 'false')
+gen_empty_obj (Chambers)
+</code></pre>
+<p>This will align the picture and generate an empty object where the chamber will be loaded to.<br>
+Next step is to generate the chambers.</p>
+<p>We can do this with the following code:</p>
+<pre><code>dev_set_draw ('margin')_
+dev_set_line_width (5)_
+
+for I := 0 to 4 by 1
+    Row := 88 + I * 70
+    for J := 0 to 2 by 1
+	    Column := 163 + J * 150
+	    gen_rectangle2 (Rectangle, Row, Column, 0, 64, 30)
+	    concat_obj (Chambers, Rectangle, Chambers)
+    endfor
+endfor
+</code></pre>
+<p>The first two lines set the drawing style and the line width.<br>
+The for-loop keeps going until all 15 rectangles have been generated at the predefined positions.</p>
+<p>After the rectangles have been generated the chambers are joined together and the preparations are made for the alignment of the following pictures.</p>
+<pre><code>affine_trans_region (Blister, Blister, HomMat2D, 'nearest_neighbor')
+difference (Blister, Chambers, Pattern)
+union1 (Chambers, ChambersUnion)
+orientation_region (Blister, PhiRef)
+PhiRef := rad(180) + PhiRef
+area_center (Blister, Area2, RowRef, ColumnRef)
+</code></pre>
 
