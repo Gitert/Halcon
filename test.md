@@ -208,6 +208,7 @@ Search for the ‘ocr’ folder and select the yoghurt_lid_04 image.</li>
 </code></pre>
 <p><strong>-Inspection criteria</strong></p>
 <p>To properly conduct a quality control of the pills and to verify if the packaging should be accepted of rejected we have to set up criteria. Unlike the bottle exercise where location was not crucial, in this case it is of most importance. Each blister should contain 15 pills so there will be an equal amount of individual regions to verify.</p>
+<p>[PLAATJE1]</p>
 <p><strong>-Creating a pattern</strong></p>
 <p>In the first step we make a reference pattern to easily ‘cut out’ the chambers in the other blister images using the reference picture we have already loaded. If you have not yet done this, go back to the previous step.</p>
 <p>Copy/Paste the following copy to the program window:</p>
@@ -244,4 +245,133 @@ orientation_region (Blister, PhiRef)
 PhiRef := rad(180) + PhiRef
 area_center (Blister, Area2, RowRef, ColumnRef)
 </code></pre>
+<p>[PLAATJE2]</p>
+<p><strong>-Align picture to pattern</strong></p>
+<p>The blisters wont be positioned in the same region, so we have to come up with a solution to solve this problem.</p>
+<p>The loaded image will be aligned to this pattern and reduced to the area of interest, i.e. the chambers of the blister pack.</p>
+<p>First off we load the next image from the blister folder. With the threshold and connection operators we create a connected region variable. Copy and paste the following code to your program.</p>
+<pre><code>read_image (Image, 'blister/blister_01')
+threshold (Image, Region, 90, 255)
+connection (Region, ConnectedRegions)_
+select_shape (ConnectedRegions, SelectedRegions, 'area', 'and', 5000, 9999999)
+shape_trans (SelectedRegions, RegionTrans, ‘convex')
+</code></pre>
+<p>Next step is to transform the picture to align it with our reference picture.</p>
+<p>This will be done by calculating the rotation with the variable Phi. Then the picture will be transformed to match the rotation of the reference picture.</p>
+<pre><code>orientation_region (RegionTrans, Phi)
+area_center (RegionTrans, Area3, Row, Column)
+vector_angle_to_rigid (Row, Column, Phi, RowRef, ColumnRef, PhiRef, HomMat2D)
+affine_trans_image (Image, ImageAffineTrans, HomMat2D, 'constant', 'false')
+</code></pre>
+<p>Try and run the program up until the last line with the F6-key and see what the program is doing. If everything went well the last line should present you with a correctly orientated picture.</p>
+<p><strong>-Segment pills</strong></p>
+<p>Now we are able to create a reference frame, align pictures to this reference, create a Region Of Interest. The next step is to segment the pills from the picture. Copy and paste the following code to your program.</p>
+<pre><code>reduce_domain (ImageAffineTrans, ChambersUnion, ImageReduced)
+decompose3 (ImageReduced, ImageR, ImageG, ImageB)
+var_threshold (ImageB, Region, 7, 7, 0.2, 2, 'dark')
+connection (Region, ConnectedRegions0)
+closing_rectangle1 (ConnectedRegions0, ConnectedRegions, 3, 3)
+fill_up (ConnectedRegions, RegionFillUp)
+select_shape (RegionFillUp, SelectedRegions, 'area', 'and', 1000, 99999)
+opening_circle (SelectedRegions, RegionOpening, 4.5)
+connection (RegionOpening, ConnectedRegions)
+select_shape (ConnectedRegions, SelectedRegions, 'area', 'and', 1000, 99999)
+shape_trans (SelectedRegions, Pills, ‘convex')
+</code></pre>
+<p>This code will import the chambers we generated earlier plus the aligned picture. It will export the pills in the blister.</p>
+<p><strong>-Wrong pill types and classify segmentation</strong></p>
+<p>Now will be a good time to determine when a pill should be accepted, rejected or find out it is missing.</p>
+<p>How can we determine to solve these problems?</p>
+<p>Since we have segmented the pills in the packaging we can calculate the area of these circles. This calculated area can be compared to predefined values to determine if a pill is correctly filled. If there is no area present we can conclude that there is a pill missing in that spot.</p>
+<p>Using the if/else statement we can formulate code to solve this problem.</p>
+<p>First we count the number of chambers. Then we create objects to be filled with wrong of missing pill objects.</p>
+<pre><code>count_obj (Chambers, Number)
+gen_empty_obj (WrongPill)
+gen_empty_obj (MissingPill)
+</code></pre>
+<p>Now we create the for-loop to check each chamber. Then we calculate the area and check if there is any detected area. If there is we check the size of this area.</p>
+<pre><code>for I := 1 to Number by 1
+    select_obj (Chambers, Chamber, I)
+    intersection (Chamber, Pills, Pill)
+    area_center (Pill, Area, Row1, Column1)
+
+ if (Area &gt; 0)
+	    min_max_gray (Pill, ImageB, 0, Min, Max, Range)
+
+	    if (Area &lt; 3800 or Min &lt; 60)
+		    concat_obj (WrongPill, Pill, WrongPill)
+	    endif
+
+  else
+		concat_obj (MissingPill, Chamber, MissingPill)
+	endif
+endfor
+</code></pre>
+<p><strong>-Display results and statistics</strong></p>
+<p>After all these calculations and writing of code it is time to showcase the results.</p>
+<p>First we clear the Graphics window and display the transformed picture to display the results onto. We also set a new color to display the resulting areas.</p>
+<pre><code>dev_clear_window ()
+dev_display (ImageAffineTrans)
+dev_set_color ('forest green’)
+</code></pre>
+<p>Now we start by counting the creating objects in the previous section and display the results.</p>
+<pre><code>count_obj (Pills, NumberP)
+count_obj (WrongPill, NumberWP)
+count_obj (MissingPill, NumberMP)
+dev_display (Pills)
+</code></pre>
+<p>With these variables we can determine if the packaging should be accepted or rejected. Lets display this onto the screen.</p>
+<p>If there are any pills missing or wrongly filled we display a ‘Not OK’ message, otherwise we accept the package.</p>
+<pre><code>if (NumberMP &gt; 0 or NumberWP &gt; 0)
+    disp_message (WindowHandle, 'Not OK', 'window', 12, 12 + 600, 'red', 'true')
+else
+    disp_message (WindowHandle, 'OK', 'window', 12, 12 + 600, 'forest green', 'true')
+endif
+</code></pre>
+<p>Lets also display the three variables into the picture and setup a message to show which pills are wrong if any.</p>
+<p>We first create a text for this message with the following code:</p>
+<pre><code>Message := '# Correct pills: ' + (NumberP - NumberWP)
+Message[1] := '# Wrong pills  :  ' + NumberWP
+Message[2] := '# Missing pills:  ' + NumberMP
+Colors := gen_tuple_const(3,'black')
+</code></pre>
+<p>To highlight the wrong pills and empty spaces we use this code:</p>
+<pre><code>if (NumberWP &gt; 0)
+    Colors[1] := 'red'
+endif
+
+if (NumberMP &gt; 0)
+    Colors[2] := 'red'
+endif
+</code></pre>
+<p>To conclude this section and display the message and the highlighting of the wrong pills we use the dev_display operator:</p>
+<pre><code>disp_message (WindowHandle, Message, 'window', 12, 12, Colors, 'true')
+dev_set_color ('red')
+dev_display (WrongPill)
+dev_display (MissingPill)
+</code></pre>
+<p>[PLAATJE3]</p>
+<p><strong>-Create loop to read multiple pictures</strong></p>
+<p>To automate this and let the program loop we insert a for-loop and edit a line of code.</p>
+<pre><code>Count := 6
+for Index := 1 to Count by 1
+    read_image (Image, 'blister/blister_' + Index$’02')
+</code></pre>
+<p>At the end of all the code we add this:</p>
+<pre><code>    if (Index &lt; Count)
+	    disp_continue_message (WindowHandle, 'black', 'true')
+    endif
+	stop ()
+endfor
+</code></pre>
+<p>Now you can press Run or F5 continuously until all the packages are checked.</p>
+<h2 id="bonus-challenge-locating-doors-in-different-positions">Bonus challenge: Locating doors in different positions</h2>
+<p><img src="https://si.wsj.net/public/resources/images/B3-AJ071_0509RO_H_20180509192121.jpg" alt="enter image description here"></p>
+<p>This bonus exercise shows an application case from the automotive industry. The task is to locate a car door in different orientations and positions using the calibrated shape based matching. First, a model is defined from a plane surface of the car door, then a calibrated position is calculated based on the calibration plate placed in the plane of the original object. For all subsequent shots, the pose can then be determined using the deformable matching.</p>
+<p>It is important to note that perspective matching can only be used for flat areas of your subject that consist of well-defined contours. In machine visions applications, matching can be used to count objects, get their position and orientation, and more.</p>
+<p><strong>-Compute calibrated pose of object</strong></p>
+<p><strong>-Tussenstapje voor Youtube tekst</strong></p>
+<p><strong>-Display the 3D origin</strong></p>
+<p><strong>-Find pose of car door in subsequent images</strong></p>
+<p><strong>-Reduce domain to increase speed</strong></p>
 
