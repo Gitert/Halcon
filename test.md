@@ -99,4 +99,17 @@ _dev_display (RoundCandidates)_
 <p>[PLAATJE4]</p>
 <p>Run your code and you’ll be presented by 20 green circles indicating that there are 20 bottles present in this crate.</p>
 <p>[PLAATJE5]</p>
+<p><strong>Step 2: Extract amount of bottles</strong></p>
+<p>After having detected the bottles present in the crates lets insert a counter. This will inform the system how many bottles have been inserted so it can calculated how much deposit should be returned to the customer.</p>
+<p>Add this line in front of your code:</p>
+<pre><code>_dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)_
+</code></pre>
+<p>Add these lines at the end of your code:</p>
+<pre><code>_count_obj (RoundCandidates, NumBottles)_
+_set_display_font (WindowHandle, 16, 'mono', 'true', 'false')_
+_disp_message (WindowHandle, NumBottles + ' bottles found.', 'window', 12, 12, 'black', ‘true')_
+</code></pre>
+<blockquote>
+<p>Run your code →</p>
+</blockquote>
 
