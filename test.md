@@ -139,9 +139,7 @@ dev_display (BigBottles)
 <p>If we run the code on this picture, we can see that because of the clutter laying on top of the bottles a couple of bottles are not detected. This will result in clutter being accepted by the machine and an angry customer because only receive a part of their deposit will be returned. This problem can be solved by giving off a warning to the machine that the crate contain clutter. So these crates will be rejected. In order to detect this clutter we will add more lines of code to the program.</p>
 <p>[PLAATJE9]</p>
 <p>To detect the clutter we can detect the large region of reflected light. With the same operator used to reduce the noise it is possible to create a clutter region.</p>
-<blockquote>
 <p>Copy the following code to your program window</p>
-</blockquote>
 <pre><code>select_shape (ConnectedRegions, Clutter, ['width','height'], 'or', [100,100], [500,400])
 opening_circle (Clutter, Clutter, 8.5)
 difference (ConnectedRegions, Clutter, Region)
@@ -151,9 +149,7 @@ connection (Region, ConnectedRegions)
 We can now count the number of times ‘Clutter’ show up and send out a warning.</p>
 <p>Add a ‘count_obj’ operator after the counter we added before. With the object being Clutter and the output is NumClutter.<br>
 NumClutter will be used to display a warning.</p>
-<blockquote>
 <p>Add these lines to the end of your code:</p>
-</blockquote>
 <pre><code>if (NumClutter &gt; 0)
 disp_message (WindowHandle, 'Warning! Clutter detected!', 'window', 50, 12, 'red', 'true')
 endif
