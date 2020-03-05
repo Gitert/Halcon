@@ -112,4 +112,47 @@ _disp_message (WindowHandle, NumBottles + ' bottles found.', 'window', 12, 12, '
 <blockquote>
 <p>Run your code →</p>
 </blockquote>
+<p>[PLAATJE6]</p>
+<p><strong>Step 3: Detecting upside down bottles</strong></p>
+<blockquote>
+<p>Double click the “read_image” operator and change the picture to “bottle_crate-08”</p>
+</blockquote>
+<p>If we run the current code through other pictures, we can see that upside down bottles are detected as correctly positioned ones. This is a problem we need to solve.</p>
+<p>[PLAATJE7]</p>
+<p>With the select_shape operator it is possible to exclude circles that are larger than a certain diameter.</p>
+<p>Add the following after the other select_shape operator.</p>
+<pre><code>_select_shape (RoundCandidates, BigBottles, 'max_diameter', 'and', 75, 99999)_
+</code></pre>
+<p>To highlight these bigger circles we add a few lines to the ‘display results’ section.</p>
+<pre><code>_dev_set_color ('goldenrod')_
+_dev_display (BigBottles)_
+</code></pre>
+<p>If you want it is possible to select another color.</p>
+<p>Running the program will result in this:</p>
+<p>[PLAATJE8]</p>
+<p><strong>Step 4: Detecting clutter on the crate</strong></p>
+<blockquote>
+<p>Double click the “read_image” operator and change the picture to “bottle_crate-12”</p>
+</blockquote>
+<p>If we run the code on this picture, we can see that because of the clutter laying on top of the bottles a couple of bottles are not detected. This will result in clutter being accepted by the machine and an angry customer because only receive a part of their deposit will be returned. This problem can be solved by giving off a warning to the machine that the crate contain clutter. So these crates will be rejected. In order to detect this clutter we will add more lines of code to the program.</p>
+<p>[PLAATJE9]</p>
+<p>To detect the clutter we can detect the large region of reflected light. With the same operator used to reduce the noise it is possible to create a clutter region.</p>
+<blockquote>
+<p>Copy the following code to your program window</p>
+</blockquote>
+<pre><code>select_shape (ConnectedRegions, Clutter, ['width','height'], 'or', [100,100], [500,400])
+opening_circle (Clutter, Clutter, 8.5)
+difference (ConnectedRegions, Clutter, Region)
+connection (Region, ConnectedRegions)
+</code></pre>
+<p>This will produce an Iconic Variable which we named ‘Clutter’.<br>
+We can now count the number of times ‘Clutter’ show up and send out a warning.</p>
+<p>Add a ‘count_obj’ operator after the counter we added before. With the object being Clutter and the output is NumClutter.<br>
+NumClutter will be used to display a warning.</p>
+<p>Add these lines to the end of your code:</p>
+<pre><code>if (NumClutter &gt; 0)
+disp_message (WindowHandle, 'Warning! Clutter detected!', 'window', 50, 12, 'red', 'true')
+endif
+</code></pre>
+<p>Run the program again and if you did everything correctly a warning message will be displayed in the Graphic Window.</p>
 
