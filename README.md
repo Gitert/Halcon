@@ -212,8 +212,8 @@ gen_empty_obj (Chambers)
 <p>This will align the picture and generate an empty object where the chamber will be loaded to.<br>
 Next step is to generate the chambers.</p>
 <p>→ <em>We can do this with the following code:</em></p>
-<pre><code>dev_set_draw ('margin')_
-dev_set_line_width (5)_
+<pre><code>dev_set_draw ('margin')
+dev_set_line_width (5)
 
 for I := 0 to 4 by 1
     Row := 88 + I * 70
